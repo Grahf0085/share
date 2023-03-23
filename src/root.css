@@ -1,0 +1,102 @@
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  src: url('./assets/fonts/atkinsonhyperlegible-regular-webfont.woff2')
+    format('woff2');
+  size-adjust: 115%;
+}
+
+@font-face {
+  font-family: 'Bookerly';
+  src: url('./assets/fonts/bookerly-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Lexend';
+  src: url('./assets/fonts/lexend-regular-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Merriweather';
+  src: url('./assets/fonts/merriweather-regular-webfont.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('./assets/fonts/rubik-regular-webfont.woff2') format('woff2');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@supports (font-variation-settings: normal) {
+  :root {
+    font-family: 'Inter var', sans-serif;
+  }
+}
+
+:root {
+  --background-color: #f1f1f1;
+  --menu-color: #f1f1f1;
+  --menu-background: url('./assets/branch2.png');
+  --sub-menu-color: #aab5bd;
+  --text-color: #000000;
+  --slider-color: #cfd2d7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background-color: #1b1b1b;
+    --menu-color: #1b1b1b;
+    --menu-background: url('./assets/branch3.png');
+    --sub-menu-color: #37393d;
+    --text-color: #f1f1f1f1;
+    --slider-color: #505b62;
+  }
+}
+
+:root.dark {
+  --background-color: #1b1b1b;
+  --menu-color: #1b1b1b;
+  --menu-background: url('./assets/branch3.png');
+  --sub-menu-color: #37393d;
+  --text-color: #f1f1f1;
+  --slider-color: #505b62;
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* test with chrome - not right at the moment */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: #fff; /*< head color */
+    cursor: pointer;
+    z-index: 100;
+    position: relative;
+  }
+
+  .slider::-moz-range-thumb {
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid var(--sub-menu-color);
+    background: var(--text-color); /*< head color */
+    box-shadow: -101vw 0 0 100vw var(--menu-color);
+    cursor: pointer;
+  }
+}
