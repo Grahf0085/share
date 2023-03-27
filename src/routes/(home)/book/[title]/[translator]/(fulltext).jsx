@@ -4,6 +4,7 @@ import { BookInfo } from '~/components/BookInfo'
 import { ChapterList } from '~/components/ChapterList'
 import { Chapters } from '~/components/Chapters'
 import { Slider } from '~/components/Slider'
+import { createSelectedFont } from '~/providers/FontProvider'
 
 export default function Fulltext() {
   let fullTextRef
@@ -16,6 +17,8 @@ export default function Fulltext() {
 
   const params = useParams()
 
+  const font = createSelectedFont()
+
   const maxPage = () => Math.ceil(scrollWidth() / window.innerWidth - 1)
 
   const handleKeydown = (event) => {
@@ -25,12 +28,41 @@ export default function Fulltext() {
       setCurrentPage(Math.min(maxPage(), currentPage() + 1))
   }
 
+  function throttled(delay, fn) {
+    let lastCall = 0
+    return function (...args) {
+      const now = new Date().getTime()
+      if (now - lastCall < delay) {
+        return
+      }
+      lastCall = now
+      return fn(...args)
+    }
+  }
+
   onMount(() => {
+    //disable browser search
     window.addEventListener('keydown', (event) => {
       if (event.keyCode === 114 || (event.ctrlKey && event.keyCode === 70))
         event.preventDefault()
     })
+
+    fullTextRef.addEventListener(
+      //TODO add check to make sure textOnScreen changed before changing page
+      'wheel',
+      throttled(350, (event) => {
+        if (event.deltaX > 0)
+          setCurrentPage(Math.min(maxPage(), currentPage() + 1))
+        if (event.deltaX < 0) setCurrentPage(Math.max(0, currentPage() - 1))
+      })
+    )
   })
+
+  createEffect(() => {
+    const selectedFont = font()
+    setScrollWidth(fullTextRef.scrollWidth)
+    return selectedFont
+  }, font())
 
   createEffect(() => {
     if (paragraphsLoaded() === 'ready') {

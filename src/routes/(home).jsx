@@ -5,12 +5,16 @@ import { createServerData$ } from 'solid-start/server'
 import { A } from '@solidjs/router'
 import face from '~/assets/face.png'
 import { Theme } from '../components/Theme.jsx'
-import { createSetSelectedFont } from '~/providers/FontProvider.jsx'
+import {
+  createSelectedFont,
+  createSetSelectedFont,
+} from '~/providers/FontProvider.jsx'
 
 export default function App() {
   const [selectedTitle, setSelectedTitle] = createSignal()
   const [pending, start] = useTransition()
   const params = useParams()
+  const selectedFont = createSelectedFont()
   const setSelectedFont = createSetSelectedFont()
 
   const titles = createServerData$(() => getAllTitles())
@@ -71,34 +75,48 @@ export default function App() {
             />
           </A>
 
-          <menu class='text-textColor absolute w-fit top-16 hidden bg-subMenuColor group-hover:block outline outline-2 outline-offset-1 rounded-md outline-menuColor'>
+          <menu class='text-textColor absolute w-full top-16 hidden bg-subMenuColor group-hover:block outline outline-2 outline-offset-1 rounded-md outline-menuColor'>
             <li
               onClick={[setSelectedFont, 'Atkinson Hyperlegible']}
-              class='mx-4 p-1 cursor-pointer font-atkinson'
+              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-atkinson ${
+                selectedFont() === 'Atkinson Hyperlegible'
+                  ? 'border-solid'
+                  : 'border-dotted'
+              }`}
             >
               Atkinson Hyperlegible
             </li>
             <li
               onClick={[setSelectedFont, 'Bookerly']}
-              class='mx-4 p-1 cursor-pointer font-bookerly'
+              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-bookerly ${
+                selectedFont() === 'Bookerly' ? 'border-solid' : 'border-dotted'
+              }`}
             >
               Bookerly
             </li>
             <li
               onClick={[setSelectedFont, 'Inter']}
-              class='mx-4 p-1 cursor-pointer font-inter'
+              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-inter ${
+                selectedFont() === 'Inter' ? 'border-solid' : 'border-dotted'
+              }`}
             >
               Inter
             </li>
             <li
               onClick={[setSelectedFont, 'Lexend']}
-              class='mx-4 p-1 cursor-pointer font-lexend'
+              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-lexend ${
+                selectedFont() === 'Lexend' ? 'border-solid' : 'border-dotted'
+              }`}
             >
               Lexend
             </li>
             <li
               onClick={[setSelectedFont, 'Merriweather']}
-              class='mx-4 p-1 cursor-pointer font-merriweather'
+              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-merriweather ${
+                selectedFont() === 'Merriweather'
+                  ? 'border-solid'
+                  : 'border-dotted'
+              }`}
             >
               Merriweather
             </li>

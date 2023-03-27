@@ -78,3 +78,18 @@ WHERE book_title = $1 AND translator_name = $2 AND chapter_number = $3 AND parag
   )
   return rows.map((row) => row.footnote)
 }
+
+export async function getSeeAlso(paragraphFK) {
+  const { rows } = await pool.query(
+    `
+SELECT translator_name AS "translatorName", book_title AS "bookTitle", sub_title AS "subTitle", chapter_number AS "chapterNumber", chapter_name AS "chapterName", paragraph_number AS "paragraphNumber", paragraph_text AS "paragraphText" 
+FROM paragraphs
+INNER JOIN chapters ON chapters.id = paragraphs.chapter_fk
+INNER JOIN books ON books.id = chapters.book_fk
+INNER JOIN translator on translator.id = books.translator_fk
+WHERE paragraphs.id = $1
+`,
+    [paragraphFK]
+  )
+  return rows
+}
