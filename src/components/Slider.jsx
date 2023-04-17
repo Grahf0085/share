@@ -1,10 +1,7 @@
-/* import { useParams } from 'solid-start' */
-
 import { createSelectedFont } from '~/providers/FontProvider'
 
 export const Slider = (props) => {
   let sliderRef
-  /* const params = useParams() */
 
   const font = createSelectedFont()
 
@@ -28,16 +25,20 @@ export const Slider = (props) => {
           ref={sliderRef}
           class='slider w-9/12 h-4 appearance-none bg-subMenuColor rounded-md overflow-hidden cursor-pointer'
         />
-        <div style={{ 'font-family': font() }} class='text-textColor w-auto'>
-          <div class='rounded-md bg-subMenuColor h-fit px-4 mx-4'>
+        <div
+          style={{ 'font-family': font() }}
+          class='text-textColor w-auto h-full flex'
+        >
+          <div class='rounded-md bg-subMenuColor h-fit px-4 py-1 mx-4'>
             {props.currentPage + 1}/{props.maxPage + 1}
+          </div>
+          <div class='rounded-md bg-subMenuColor h-fit px-4 py-1 mx-2'>
+            {props.currentChapter === 'Chapter: 0'
+              ? 'Preface'
+              : `${props.currentChapter}`}
           </div>
         </div>
       </div>
     </div>
   )
-}
-
-{
-  /* <span>{decodeURI(params.title)}</span> */
 }

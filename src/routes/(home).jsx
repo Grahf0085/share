@@ -5,17 +5,21 @@ import { createServerData$ } from 'solid-start/server'
 import { A } from '@solidjs/router'
 import face from '~/assets/face.png'
 import { Theme } from '../components/Theme.jsx'
-import {
-  createSelectedFont,
-  createSetSelectedFont,
-} from '~/providers/FontProvider.jsx'
+import { FontSelector } from '~/components/FontSelector.jsx'
+import { Search } from '~/components/Search.jsx'
 
 export default function App() {
   const [selectedTitle, setSelectedTitle] = createSignal()
   const [pending, start] = useTransition()
   const params = useParams()
-  const selectedFont = createSelectedFont()
-  const setSelectedFont = createSetSelectedFont()
+
+  const fonts = [
+    'Atkinson Hyperlegible',
+    'Bookerly',
+    'Inter',
+    'Lexend',
+    'Merriweather',
+  ]
 
   const titles = createServerData$(() => getAllTitles())
   const translators = createServerData$((value) => getTranslations(value), {
@@ -30,6 +34,9 @@ export default function App() {
     <div class='h-screen flex flex-col bg-backgroundColor'>
       <header class='grid grid-cols-[8fr_1fr] w-screen h-20 font-rubik'>
         <nav class='flex justify-around w-full bg-menuBackground bg-no-repeat bg-right rounded-md'>
+          <div class='flex items-center'>
+            <Search titles={titles()} />
+          </div>
           <For each={titles()} fallback={<div>Loading Titles...</div>}>
             {(title) => (
               <menu
@@ -41,12 +48,12 @@ export default function App() {
                     decodeURI(params.title) === title
                       ? 'border-solid'
                       : 'border-dotted'
-                  } border-subMenuColor group-hover:border-transparent`}
+                  } border-textColor rounded-md group-hover:border-transparent group-hover:bg-menuColor`}
                 >
                   {title}
                 </li>
                 <Show when={title === selectedTitle()}>
-                  <menu class='absolute top-16 w-full hidden bg-subMenuColor group-hover:block outline outline-2 outline-offset-1 rounded-md outline-menuColor'>
+                  <menu class='absolute top-16 w-full hidden bg-subMenuColor group-hover:block outline outline-2 outline-offset-0 rounded-md outline-menuColor'>
                     <For
                       each={translators()}
                       fallback={<div>Loading Translators...</div>}
@@ -74,52 +81,8 @@ export default function App() {
               onClick={() => setSelectedTitle(undefined)}
             />
           </A>
-
-          <menu class='text-textColor absolute w-full top-16 hidden bg-subMenuColor group-hover:block outline outline-2 outline-offset-1 rounded-md outline-menuColor'>
-            <li
-              onClick={[setSelectedFont, 'Atkinson Hyperlegible']}
-              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-atkinson ${
-                selectedFont() === 'Atkinson Hyperlegible'
-                  ? 'border-solid'
-                  : 'border-dotted'
-              }`}
-            >
-              Atkinson Hyperlegible
-            </li>
-            <li
-              onClick={[setSelectedFont, 'Bookerly']}
-              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-bookerly ${
-                selectedFont() === 'Bookerly' ? 'border-solid' : 'border-dotted'
-              }`}
-            >
-              Bookerly
-            </li>
-            <li
-              onClick={[setSelectedFont, 'Inter']}
-              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-inter ${
-                selectedFont() === 'Inter' ? 'border-solid' : 'border-dotted'
-              }`}
-            >
-              Inter
-            </li>
-            <li
-              onClick={[setSelectedFont, 'Lexend']}
-              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-lexend ${
-                selectedFont() === 'Lexend' ? 'border-solid' : 'border-dotted'
-              }`}
-            >
-              Lexend
-            </li>
-            <li
-              onClick={[setSelectedFont, 'Merriweather']}
-              class={`mx-4 p-1 w-min cursor-pointer border-b-2 border-menuColor font-merriweather ${
-                selectedFont() === 'Merriweather'
-                  ? 'border-solid'
-                  : 'border-dotted'
-              }`}
-            >
-              Merriweather
-            </li>
+          <menu class='text-textColor absolute w-full p-2 top-16 hidden bg-subMenuColor group-hover:block outline outline-2 outline-offset-1 rounded-md outline-menuColor'>
+            <For each={fonts}>{(font) => <FontSelector font={font} />}</For>
             <li class='p-2'>
               <Theme />
             </li>

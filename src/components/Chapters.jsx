@@ -1,7 +1,7 @@
 import { getChapterList } from '~/server/database'
 import { createServerData$ } from 'solid-start/server'
 import { useParams } from 'solid-start'
-import { createEffect, For } from 'solid-js'
+import { For, onCleanup } from 'solid-js'
 import { Paragraphs } from './Paragraphs'
 import { createSelectedFont } from '~/providers/FontProvider'
 
@@ -18,11 +18,6 @@ export const Chapters = (props) => {
     }
   )
 
-  createEffect(() => {
-    props.setParagraphsLoaded('unresolved')
-    props.setParagraphsLoaded(chapterList.state)
-  })
-
   return (
     <For
       each={chapterList()}
@@ -31,7 +26,12 @@ export const Chapters = (props) => {
       {(chapter) => (
         <>
           <h2
-            ref={(el) => props.setAllChapters((p) => [...p, el])}
+            ref={(el) => {
+              props.setAllChapters((p) => [...p, el])
+              onCleanup(() => {
+                props.setAllChapters((p) => p.filter((i) => i !== el))
+              })
+            }}
             style={{ 'font-family': font() }}
             class='snap-center text-textColor font-bold'
           >

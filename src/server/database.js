@@ -93,3 +93,18 @@ WHERE paragraphs.id = $1
   )
   return rows
 }
+
+export async function getSearch(term) {
+  const { rows } = await pool.query(
+    `
+SELECT paragraph_text AS "paragraphText", chapter_number, book_title, translator_name, ts_rank(paragraph_tokens, websearch_to_tsquery($1)) as rank
+FROM paragraphs
+INNER JOIN chapters ON chapters.id = paragraphs.chapter_fk
+INNER JOIN books ON books.id = chapters.book_fk
+INNER JOIN translator ON translator.id = books.translator_fk
+ORDER BY rank DESC
+`,
+    [term]
+  )
+  return rows
+}

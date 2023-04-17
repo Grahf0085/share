@@ -14,6 +14,8 @@ import {
   Title,
 } from 'solid-start'
 import { FontProvider } from './providers/FontProvider'
+import { IntersectionProvider } from './providers/IntersectionProvider'
+import { ScrollWidthProvider } from './providers/ScrollWidthProvider'
 import './root.css'
 
 export default function Root() {
@@ -41,9 +43,13 @@ if (sessionStorage.theme === 'dark')
         <Suspense>
           <ErrorBoundary>
             <FontProvider>
-              <Routes>
-                <FileRoutes />
-              </Routes>
+              <ScrollWidthProvider>
+                <IntersectionProvider>
+                  <Routes>
+                    <FileRoutes />
+                  </Routes>
+                </IntersectionProvider>
+              </ScrollWidthProvider>
             </FontProvider>
           </ErrorBoundary>
         </Suspense>

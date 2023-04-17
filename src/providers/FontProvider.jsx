@@ -3,7 +3,7 @@ import { createSignal, createContext, useContext } from 'solid-js'
 export const FontContext = createContext()
 
 export const FontProvider = (props) => {
-  const [selectedFont, setSelectedFont] = createSignal('inter')
+  const [selectedFont, setSelectedFont] = createSignal('Inter')
 
   return (
     <FontContext.Provider value={[selectedFont, setSelectedFont]}>

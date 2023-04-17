@@ -27,6 +27,7 @@ export const Paragraphs = (props) => {
           paragraphNumber={paragraph.paragraphNumber}
           text={paragraph.paragraphText.split(' ')}
           seeAlsoArray={paragraph.seeAlso}
+          title={params.title}
         />
       )}
     </For>

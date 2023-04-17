@@ -11,14 +11,24 @@ export const SeeAlso = (props) => {
 
   return (
     <For each={seeAlso()} fallback={<></>}>
-      {(info) => (
-        <>
-          <br />
-          <span>
-            {info.bookTitle}, chapter {info.chapterNumber}, paragraph{' '}
-            {info.paragraphNumber}
-          </span>
-        </>
+      {(seeAlso) => (
+        <aside
+          onClick={() => {
+            props.setSeeAlsoText(
+              props.seeAlsoText === seeAlso.paragraphText
+                ? ''
+                : seeAlso.paragraphText
+            )
+            props.setSeeAlsoReference({
+              title: `${seeAlso.bookTitle}`,
+              chapter: `${seeAlso.chapterNumber}`,
+            })
+          }}
+          class='cursor-pointer bg-subMenuColor rounded-md p-2'
+        >
+          <cite>{seeAlso.bookTitle}</cite>, Chapter {seeAlso.chapterNumber},
+          Paragraph {seeAlso.paragraphNumber}
+        </aside>
       )}
     </For>
   )
