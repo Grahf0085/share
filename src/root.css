@@ -94,7 +94,7 @@
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    border: 2px solid var(--sub-menu-color);
+    border: 3px solid var(--sub-menu-color);
     background: var(--text-color); /*< head color */
     box-shadow: -101vw 0 0 100vw var(--menu-color);
     cursor: pointer;

@@ -1,8 +1,3 @@
 export default function Home() {
-  return (
-    <div class='flex-1 flex flex-col'>
-      <h1 class='h-full'>Be Careful</h1>
-      <footer class='flex-1'>FOOTER</footer>
-    </div>
-  )
+  return <h1 class='h-full w-full text-textColor'>Main Page</h1>
 }

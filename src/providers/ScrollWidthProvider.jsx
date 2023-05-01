@@ -5,6 +5,7 @@ export const ScrollWidthContext = createContext()
 export const ScrollWidthProvider = (props) => {
   const [fullTextRef, setFullTextRef] = createSignal()
   const [scrollWidth, setScrollWidth] = createSignal(0)
+  const [drawerOpen, setDrawerOpen] = createSignal(false)
 
   /* createEffect(() => { */
   /*   const contentChanged = font() */
@@ -14,7 +15,14 @@ export const ScrollWidthProvider = (props) => {
 
   return (
     <ScrollWidthContext.Provider
-      value={[scrollWidth, setScrollWidth, fullTextRef, setFullTextRef]}
+      value={[
+        scrollWidth,
+        setScrollWidth,
+        fullTextRef,
+        setFullTextRef,
+        drawerOpen,
+        setDrawerOpen,
+      ]}
     >
       {props.children}
     </ScrollWidthContext.Provider>
@@ -39,4 +47,14 @@ export const createFullTextRef = () => {
 export const createSetFullTextRef = () => {
   const setNewFullTextRef = useContext(ScrollWidthContext)[3]
   return setNewFullTextRef
+}
+
+export const createDrawerOpen = () => {
+  const newDrawerOpen = useContext(ScrollWidthContext)[4]
+  return newDrawerOpen
+}
+
+export const createSetDrawerOpen = () => {
+  const setNewDrawerOpen = useContext(ScrollWidthContext)[5]
+  return setNewDrawerOpen
 }

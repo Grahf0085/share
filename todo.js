@@ -11,3 +11,4 @@
 //more see alsos
 //more translations
 //after more translations add abilties to compare translations of each paragraoh
+//add random quotes to landing page?

@@ -1,15 +1,8 @@
-import {
-  onMount,
-  createSignal,
-  createEffect,
-  onCleanup,
-  on,
-  Show,
-} from 'solid-js'
+import { onMount, createSignal, createEffect, onCleanup, on } from 'solid-js'
 import { useParams } from 'solid-start'
-import { BookInfo } from '~/components/BookInfo'
-import { ChapterList } from '~/components/ChapterList'
-import { Chapters } from '~/components/Chapters'
+import { BookInfo } from '~/components/book-parts/BookInfo'
+import { ChapterList } from '~/components/book-parts/ChapterList'
+import { Chapters } from '~/components/book-parts/Chapters'
 import { Slider } from '~/components/Slider'
 import { createSelectedFont } from '~/providers/FontProvider'
 import {
@@ -17,6 +10,7 @@ import {
   createNewSetScrollWidth,
   createFullTextRef,
   createSetFullTextRef,
+  createDrawerOpen,
 } from '~/providers/ScrollWidthProvider'
 import { createBookRefs } from '~/providers/IntersectionProvider'
 import scrollIntoView from 'smooth-scroll-into-view-if-needed'
@@ -40,6 +34,7 @@ export default function Fulltext() {
   const fullTextRef = createFullTextRef()
   const setFullTextRef = createSetFullTextRef()
   const bookRefs = createBookRefs()
+  const drawerOpen = createDrawerOpen()
 
   const maxPage = () => Math.ceil(scrollWidth() / windowWidth() - 1)
 
@@ -60,18 +55,12 @@ export default function Fulltext() {
     })
   }
 
-  const handleKeydown = (event) => {
-    if (event.key === 'ArrowLeft')
-      setCurrentPage(Math.max(0, currentPage() - 1))
-    if (event.key === 'ArrowRight')
-      setCurrentPage(Math.min(maxPage(), currentPage() + 1))
-  }
-
-  function throttled(delay, fn) {
+  function throttled(prevDef, delay, fn) {
     let lastCall = 0
     return function (...args) {
       const now = new Date().getTime()
       if (now - lastCall < delay) {
+        if (prevDef === true) event.preventDefault()
         return
       }
       lastCall = now
@@ -89,15 +78,23 @@ export default function Fulltext() {
     setScrollWidth(fullTextRef().scrollWidth)
     setClientWidth(fullTextRef().clientWidth)
     scrollIntoView(textOnScreen(), {
-      scrollMode: 'if-needed',
-      block: 'nearest',
-    }).then(() => {
-      setScrollLeft(fullTextRef().scrollLeft)
-      const percentScrolled = scrollLeft() / (scrollWidth() - clientWidth())
-      const newPage = Math.ceil(percentScrolled * maxPage())
-      setCurrentPage(newPage)
-      bookRefs().forEach((reference) => intersectionObserver.observe(reference))
+      block: 'center',
+      inline: 'center',
+      behavior: 'smooth',
     })
+      .then(() => {
+        createEffect(() => {
+          setScrollLeft(fullTextRef().scrollLeft)
+          const percentScrolled = scrollLeft() / (scrollWidth() - clientWidth())
+          const newPage = Math.ceil(percentScrolled * maxPage())
+          setCurrentPage(newPage)
+        })
+      })
+      .finally(() => {
+        bookRefs().forEach((reference) =>
+          intersectionObserver.observe(reference)
+        )
+      })
   }
 
   onMount(() => {
@@ -111,18 +108,23 @@ export default function Fulltext() {
 
     fullTextRef().addEventListener(
       'wheel',
-      throttled(350, (event) => {
+      throttled(false, 350, (event) => {
         if (event.deltaX > 0)
           setCurrentPage(Math.min(maxPage(), currentPage() + 1))
 
         if (event.deltaX < 0) setCurrentPage(Math.max(0, currentPage() - 1))
       })
     )
-  })
 
-  onCleanup(() => {
-    window.removeEventListener('resize', handleWindowSize)
-    intersectionObserver.disconnect()
+    fullTextRef().addEventListener(
+      'keydown',
+      throttled(false, 350, (event) => {
+        if (event.key === 'ArrowLeft')
+          setCurrentPage(Math.max(0, currentPage() - 1))
+        if (event.key === 'ArrowRight')
+          setCurrentPage(Math.min(maxPage(), currentPage() + 1))
+      })
+    )
   })
 
   createEffect(() => {
@@ -140,9 +142,16 @@ export default function Fulltext() {
     }
   })
 
+  onCleanup(() => {
+    window.removeEventListener('resize', handleWindowSize)
+    window.removeEventListener('wheel', throttled)
+    fullTextRef().removeEventListener('keydown', throttled)
+    intersectionObserver.disconnect()
+  })
+
   createEffect(
     on(
-      font,
+      [font, drawerOpen],
       () => {
         setScrollWidth(fullTextRef().scrollWidth)
         handleWindowSize()
@@ -151,27 +160,26 @@ export default function Fulltext() {
     )
   )
 
-  createEffect(() => (fullTextRef().scrollLeft = scrollLeft()))
-
-  createEffect(() => {
-    const book = `${params.title} + ${params.translator}`
-    if (book) {
-      setCurrentPage(0)
-      fullTextRef().scrollLeft = 0
-      setScrollWidth(fullTextRef().scrollWidth)
-      setClientWidth(fullTextRef().clientWidth)
-      setScrollLeft(fullTextRef().scrollLeft)
-      fullTextRef().focus()
-    }
-  })
-
   return (
-    <Show when={params.title}>
+    <>
       <div
-        ref={(el) => setFullTextRef(el)}
+        ref={(el) => {
+          setFullTextRef(el)
+          createEffect(() => {
+            //need to make sure this works for multiple translations of same book
+            if (params.title || params.translator) {
+              setFullTextRef(el)
+              setCurrentPage(0)
+              fullTextRef().scrollLeft = 0
+              setScrollWidth(fullTextRef().scrollWidth)
+              setClientWidth(fullTextRef().clientWidth)
+              setScrollLeft(fullTextRef().scrollLeft)
+              fullTextRef().focus()
+            }
+          })
+        }}
         tabIndex={-1}
-        onKeyDown={handleKeydown}
-        class='h-[88vh] flex flex-col flex-wrap overflow-y-hidden snap-mandatory snap-x no-scrollbar'
+        class='flex flex-col flex-wrap overflow-y-hidden snap-mandatory snap-x no-scrollbar'
       >
         <BookInfo />
         <ChapterList
@@ -190,7 +198,8 @@ export default function Fulltext() {
         setCurrentPage={setCurrentPage}
         maxPage={maxPage()}
         currentChapter={currentChapter()}
+        fullTextRef={fullTextRef()}
       />
-    </Show>
+    </>
   )
 }

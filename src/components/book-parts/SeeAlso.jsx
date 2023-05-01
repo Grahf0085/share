@@ -12,7 +12,8 @@ export const SeeAlso = (props) => {
   return (
     <For each={seeAlso()} fallback={<></>}>
       {(seeAlso) => (
-        <aside
+        <button
+          type='button'
           onClick={() => {
             props.setSeeAlsoText(
               props.seeAlsoText === seeAlso.paragraphText
@@ -24,11 +25,11 @@ export const SeeAlso = (props) => {
               chapter: `${seeAlso.chapterNumber}`,
             })
           }}
-          class='cursor-pointer bg-subMenuColor rounded-md p-2'
+          class='bg-subMenuColor rounded-md p-2'
         >
           <cite>{seeAlso.bookTitle}</cite>, Chapter {seeAlso.chapterNumber},
           Paragraph {seeAlso.paragraphNumber}
-        </aside>
+        </button>
       )}
     </For>
   )

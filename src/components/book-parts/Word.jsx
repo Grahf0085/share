@@ -10,7 +10,6 @@ import { createSetBookRefs } from '~/providers/IntersectionProvider'
 
 export const Word = (props) => {
   let footnoteCount = -1
-  let wordRef
   const font = createSelectedFont()
 
   const [seeAlsoText, setSeeAlsoText] = createSignal('')
@@ -27,18 +26,17 @@ export const Word = (props) => {
   })
 
   return (
-    <div
-      ref={wordRef}
-      class='flex w-full snap-center overflow-y-auto overflow-x-hidden text-textColor'
-    >
+    <div class='flex w-full snap-center overflow-y-auto overflow-x-hidden text-textColor'>
       <p
         ref={(el) => {
           setBookRefs((p) => [...p, el])
         }}
-        style={{ 'font-family': font() }}
-        class={`whitespace-pre-wrap py-4 px-14 ${
-          seeAlsoText() ? 'w-2/3' : 'w-full'
-        }`}
+        style={{
+          'font-family': font(),
+          width: seeAlsoText() ? '66.666667%' : '100%',
+          'transition-duration': '500ms',
+        }}
+        class='whitespace-pre-wrap py-4 px-14'
         data-chapter={`Chapter: ${props.chapterNumber}`}
         data-book={props.title}
       >
@@ -89,7 +87,9 @@ export const Word = (props) => {
           style={{ 'font-family': font() }}
           class='w-1/3 h-max bg-subMenuColor rounded-md p-4'
         >
-          <button onClick={() => setSeeAlsoText('')}>Close</button>
+          <button type='button' onClick={() => setSeeAlsoText('')}>
+            Close
+          </button>
           <figcaption class='py-4'>
             <cite>{seeAlsoReference()?.title}</cite>
             &nbsp Chapter {seeAlsoReference()?.chapter}

@@ -1,6 +1,7 @@
 /* BUG: flickers when page refreshed on theme other than users preference */
 
-import { onMount, createSignal } from 'solid-js'
+import { onMount, createSignal, Show } from 'solid-js'
+import { AiFillBulb, AiOutlineBulb } from 'solid-icons/ai'
 
 export const Theme = () => {
   const STORAGE_KEY = 'theme'
@@ -52,5 +53,14 @@ export const Theme = () => {
     applyTheme()
   }
 
-  return <button onClick={toggleTheme}>ThemeComp</button>
+  return (
+    <button type='button' onClick={toggleTheme}>
+      <Show
+        when={currentTheme() === THEMES.DARK}
+        fallback={<AiFillBulb size={30} />}
+      >
+        <AiOutlineBulb size={30} />
+      </Show>
+    </button>
+  )
 }

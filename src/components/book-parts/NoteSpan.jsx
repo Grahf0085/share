@@ -6,12 +6,13 @@ export const NoteSpan = (props) => {
 
   return (
     <span class='inline-flex'>
-      <span
+      <button
+        type='button'
         onClick={() => setShowFootnotes(!showFootnotes())}
-        class='font-bold cursor-pointer'
+        class='font-bold'
       >
         {props.wordForFootnote + ' '}
-      </span>
+      </button>
       {props.wordNotForFootnote + ' '}
       <Footnotes
         chapterNumber={props.chapterNumber}

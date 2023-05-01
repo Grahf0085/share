@@ -1,7 +1,7 @@
 import { getChapterList } from '~/server/database'
 import { createServerData$ } from 'solid-start/server'
 import { useParams } from 'solid-start'
-import { createEffect, For } from 'solid-js'
+import { For } from 'solid-js'
 import scrollIntoView from 'smooth-scroll-into-view-if-needed'
 import { createSelectedFont } from '~/providers/FontProvider'
 import { createSetBookRefs } from '~/providers/IntersectionProvider'
@@ -24,7 +24,7 @@ export const ChapterList = (props) => {
   const handleChapterLink = (chapterNumber) => {
     scrollIntoView(props.allChapters[chapterNumber], {
       block: 'nearest',
-      scrollMode: 'if-needed',
+      behavior: 'smooth',
     }).then(() => {
       const percentScrolled =
         props.fullTextRef.scrollLeft /
@@ -49,11 +49,13 @@ export const ChapterList = (props) => {
         fallback={<div class='text-textColor'>Loading Chapter List...</div>}
       >
         {(chapter) => (
-          <li
-            onClick={() => handleChapterLink(chapter.chapterNumber)}
-            class='cursor-pointer'
-          >
-            {chapter.chapterName}
+          <li>
+            <button
+              type='button'
+              onClick={() => handleChapterLink(chapter.chapterNumber)}
+            >
+              {chapter.chapterName}
+            </button>
           </li>
         )}
       </For>
