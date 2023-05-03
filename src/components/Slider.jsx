@@ -11,6 +11,7 @@ export const Slider = (props) => {
     const scrollWidth = props.scrollWidth - props.clientWidth
     props.setScrollLeft(percentScrolled * scrollWidth)
     props.fullTextRef.scrollLeft = percentScrolled * scrollWidth
+    props.fullTextRef.focus()
   }
 
   return (

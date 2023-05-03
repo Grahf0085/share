@@ -4,7 +4,7 @@ import { getAllTitles, getTranslations } from '~/server/database'
 import { createServerData$ } from 'solid-start/server'
 import { A } from '@solidjs/router'
 import face from '~/assets/face.png'
-/* import { Theme } from '../components/Theme.jsx' */
+import { Theme } from '../components/Theme.jsx'
 import { FontSelector } from '~/components/FontSelector.jsx'
 /* import { Search } from '~/components/Search.jsx' */
 import { AiOutlineMenu, AiOutlineCloseCircle } from 'solid-icons/ai'
@@ -43,8 +43,9 @@ export default function App() {
   console.log('pending is: ', pending()) //what do I do with this???
 
   return (
-    <div class='h-screen w-screen grid grid-rows-[10%_90%] bg-backgroundColor'>
-      <header class='grid grid-cols-[5%_90%_5%] font-rubik'>
+    <div class='h-screen w-screen flex flex-col bg-backgroundColor'>
+      {/* height in header is later user to calculate height of main div */}
+      <header class='grid grid-cols-[5%_90%_5%] font-rubik h-20'>
         <button
           onClick={() => setDrawerOpen(!drawerOpen())}
           class='text-textColor hover:bg-subMenuColor rounded-sm h-full w-full flex justify-center items-center'
@@ -90,11 +91,12 @@ export default function App() {
                     {title}
                   </span>
                 </li>
-                {/* <Show when={title === selectedTitle()}> */}
                 <menu class='absolute top-16 w-full hidden bg-subMenuColor group-hover:block rounded-sm'>
                   <For
                     each={translators()}
-                    fallback={<div>Loading Translators...</div>}
+                    fallback={
+                      <div class='text-textColor'>Loading Translators...</div>
+                    }
                   >
                     {(translator) => (
                       <li class='text-center p-4 text-textColor'>
@@ -105,7 +107,6 @@ export default function App() {
                     )}
                   </For>
                 </menu>
-                {/* </Show> */}
               </menu>
             )}
           </For>
@@ -133,7 +134,7 @@ export default function App() {
         {/*   </menu> */}
         {/* </menu> */}
       </header>
-      <div class='flex'>
+      <div class='flex max-h-[calc(100vh-5rem)]'>
         <div
           style={{
             width: drawerOpen() === true ? '25%' : '0px',
@@ -141,11 +142,8 @@ export default function App() {
           }}
         >
           <Show when={drawerOpen() === true} fallback={<div />}>
-            <p class='text-textColor'>
-              Lorem ipsum dolor sit amet, qui minim labore adipisicing minim
-              sint cillum sint consectetur cupidatat.
-            </p>
             <For each={fonts}>{(font) => <FontSelector font={font} />}</For>
+            <Theme />
           </Show>
         </div>
         <div

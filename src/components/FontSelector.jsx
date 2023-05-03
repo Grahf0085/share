@@ -13,7 +13,7 @@ export const FontSelector = (props) => {
         'font-family': props.font,
         border: selectedFont() === props.font ? 'solid' : 'none',
       }}
-      class='py-2 w-full text-center border-x-2 border-menuColor rounded-md hover:bg-menuColor text-textColor'
+      class='p-4 border-x-2 border-menuColor rounded-sm hover:bg-subMenuColor text-textColor'
     >
       <button type='button' onClick={() => setSelectedFont(props.font)}>
         {props.font}

@@ -7,12 +7,6 @@ export const ScrollWidthProvider = (props) => {
   const [scrollWidth, setScrollWidth] = createSignal(0)
   const [drawerOpen, setDrawerOpen] = createSignal(false)
 
-  /* createEffect(() => { */
-  /*   const contentChanged = font() */
-  /*   setScrollWidth(fullTextRef.scrollWidth) */
-  /*   return contentChanged */
-  /* }) */
-
   return (
     <ScrollWidthContext.Provider
       value={[

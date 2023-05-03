@@ -38,6 +38,8 @@ export default function Fulltext() {
 
   const maxPage = () => Math.ceil(scrollWidth() / windowWidth() - 1)
 
+  createEffect(() => console.log('max page: ', maxPage()))
+
   const intersectionObserverOptions = {
     root: null, // relative to document viewport
     rootMargin: '0px', // margin around root. Values are similar to css property. Unitless values not allowed
@@ -75,7 +77,7 @@ export default function Fulltext() {
       )
     }
     setWindowWidth(window.innerWidth)
-    setScrollWidth(fullTextRef().scrollWidth)
+    /* setScrollWidth(fullTextRef().scrollWidth) */
     setClientWidth(fullTextRef().clientWidth)
     scrollIntoView(textOnScreen(), {
       block: 'center',
@@ -104,6 +106,17 @@ export default function Fulltext() {
         event.preventDefault()
     })
 
+    const fullTextResizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        console.log('size changed: ', entry.target)
+        setScrollWidth(entry.target.scrollWidth)
+      }
+    })
+
+    setScrollWidth(fullTextRef().scrollWidth)
+
+    fullTextResizeObserver.observe(fullTextRef())
+
     window.addEventListener('resize', handleWindowSize)
 
     fullTextRef().addEventListener(
@@ -118,7 +131,7 @@ export default function Fulltext() {
 
     fullTextRef().addEventListener(
       'keydown',
-      throttled(false, 350, (event) => {
+      throttled(true, 350, (event) => {
         if (event.key === 'ArrowLeft')
           setCurrentPage(Math.max(0, currentPage() - 1))
         if (event.key === 'ArrowRight')
@@ -153,7 +166,7 @@ export default function Fulltext() {
     on(
       [font, drawerOpen],
       () => {
-        setScrollWidth(fullTextRef().scrollWidth)
+        /* setScrollWidth(fullTextRef().scrollWidth) */
         handleWindowSize()
       },
       { defer: true }
