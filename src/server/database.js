@@ -39,7 +39,7 @@ SELECT chapter_number AS "chapterNumber", chapter_name AS "chapterName"
 FROM chapters
 INNER JOIN books ON books.id = chapters.book_fk
 INNER JOIN translator ON translator.id = books.translator_fk
-WHERE book_title = $1 and translator_name = $2
+WHERE book_title = $1 AND translator_name = $2
 `,
     [decodeURI(title), decodeURI(translator)]
   )
@@ -94,17 +94,44 @@ WHERE paragraphs.id = $1
   return rows
 }
 
-export async function getSearch(term) {
+export async function getSingleSearch(term, title, translator) {
   const { rows } = await pool.query(
     `
-SELECT paragraph_text AS "paragraphText", chapter_number, book_title, translator_name, ts_rank(paragraph_tokens, websearch_to_tsquery($1)) as rank
+SELECT paragraph_text AS "paragraphText", paragraph_number AS "paragraphNumber", chapter_number AS "chapterNumber", chapter_name AS "chapterName", book_title AS "bookTitle", translator_name AS "translatorName", ts_rank(paragraph_tokens, websearch_to_tsquery($1)) as rank
 FROM paragraphs
 INNER JOIN chapters ON chapters.id = paragraphs.chapter_fk
 INNER JOIN books ON books.id = chapters.book_fk
 INNER JOIN translator ON translator.id = books.translator_fk
+WHERE book_title = $2 AND translator_name = $3
 ORDER BY rank DESC
 `,
-    [term]
+    [term, decodeURI(title), decodeURI(translator)]
   )
   return rows
+}
+
+/* export async function getSearch(term) { */
+/*   const { rows } = await pool.query( */
+/*     ` */
+/* SELECT paragraph_text AS "paragraphText", chapter_number, book_title, translator_name, ts_rank(paragraph_tokens, websearch_to_tsquery($1)) as rank */
+/* FROM paragraphs */
+/* INNER JOIN chapters ON chapters.id = paragraphs.chapter_fk */
+/* INNER JOIN books ON books.id = chapters.book_fk */
+/* INNER JOIN translator ON translator.id = books.translator_fk */
+/* ORDER BY rank DESC */
+/* `, */
+/*     [term] */
+/*   ) */
+/*   return rows */
+/* } */
+
+export async function getQuote() {
+  const { rows } = await pool.query(
+    'SELECT quote_text AS "quoteText", chatgpt_commentary AS "chatgptCommentary" FROM quotes'
+  )
+  const randomNumber = Math.floor(Math.random() * rows.length)
+  return {
+    quoteText: rows[randomNumber].quoteText,
+    commentary: rows[randomNumber].chatgptCommentary,
+  }
 }

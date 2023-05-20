@@ -3,11 +3,17 @@ import { createServerData$ } from 'solid-start/server'
 import { useParams } from 'solid-start'
 import { For, onCleanup } from 'solid-js'
 import { Paragraphs } from './Paragraphs'
-import { createSelectedFont } from '~/providers/FontProvider'
+import {
+  createSelectedFont,
+  createSelectedFontSize,
+  createSelectedLineHeight,
+} from '~/providers/FontProvider'
 
 export const Chapters = (props) => {
   const params = useParams()
   const font = createSelectedFont()
+  const lineHeight = createSelectedLineHeight()
+  const fontSize = createSelectedFontSize()
 
   const chapterList = createServerData$(
     (value) => getChapterList(value[0], value[1]),
@@ -32,8 +38,12 @@ export const Chapters = (props) => {
                 props.setAllChapters((p) => p.filter((i) => i !== el))
               })
             }}
-            style={{ 'font-family': font() }}
-            class='snap-center text-textColor font-bold'
+            style={{
+              'font-size': fontSize(),
+              'line-height': lineHeight(),
+              'font-family': font(),
+            }}
+            class='snap-center text-textColor font-bold w-full'
           >
             {chapter.chapterName}
           </h2>

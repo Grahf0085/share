@@ -1,5 +1,9 @@
 import { For, Show, createSignal, createEffect } from 'solid-js'
-import { createSelectedFont } from '~/providers/FontProvider'
+import {
+  createSelectedFont,
+  createSelectedFontSize,
+  createSelectedLineHeight,
+} from '~/providers/FontProvider'
 import { NoteSpan } from './NoteSpan'
 import { SeeAlso } from './SeeAlso'
 import {
@@ -11,6 +15,8 @@ import { createSetBookRefs } from '~/providers/IntersectionProvider'
 export const Word = (props) => {
   let footnoteCount = -1
   const font = createSelectedFont()
+  const lineHeight = createSelectedLineHeight()
+  const fontSize = createSelectedFontSize()
 
   const [seeAlsoText, setSeeAlsoText] = createSignal('')
   const [seeAlsoReference, setSeeAlsoReference] = createSignal()
@@ -32,6 +38,8 @@ export const Word = (props) => {
           setBookRefs((p) => [...p, el])
         }}
         style={{
+          'font-size': fontSize(),
+          'line-height': lineHeight(),
           'font-family': font(),
           width: seeAlsoText() ? '66.666667%' : '100%',
           'transition-duration': '500ms',
@@ -84,8 +92,12 @@ export const Word = (props) => {
       {/* actual text from other book when user opens it from SeeAlso component */}
       <Show when={seeAlsoText() !== ''} fallback={<></>}>
         <figure
-          style={{ 'font-family': font() }}
-          class='w-1/3 h-max bg-subMenuColor rounded-md p-4'
+          style={{
+            'font-size': fontSize(),
+            'line-height': lineHeight(),
+            'font-family': font(),
+          }}
+          class='w-1/3 h-max bg-subMenuColor rounded-sm p-4'
         >
           <button type='button' onClick={() => setSeeAlsoText('')}>
             Close

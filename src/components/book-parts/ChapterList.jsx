@@ -3,12 +3,18 @@ import { createServerData$ } from 'solid-start/server'
 import { useParams } from 'solid-start'
 import { For } from 'solid-js'
 import scrollIntoView from 'smooth-scroll-into-view-if-needed'
-import { createSelectedFont } from '~/providers/FontProvider'
+import {
+  createSelectedFont,
+  createSelectedFontSize,
+  createSelectedLineHeight,
+} from '~/providers/FontProvider'
 import { createSetBookRefs } from '~/providers/IntersectionProvider'
 
 export const ChapterList = (props) => {
   const params = useParams()
   const font = createSelectedFont()
+  const lineHeight = createSelectedLineHeight()
+  const fontSize = createSelectedFontSize()
 
   const setBookRefs = createSetBookRefs()
 
@@ -39,7 +45,11 @@ export const ChapterList = (props) => {
       ref={(el) => {
         setBookRefs((p) => [...p, el])
       }}
-      style={{ 'font-family': font() }}
+      style={{
+        'font-size': fontSize(),
+        'line-height': lineHeight(),
+        'font-family': font(),
+      }}
       class='text-textColor h-full w-full snap-center'
       data-chapter='Contents'
       data-book={params.title}

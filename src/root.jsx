@@ -43,13 +43,13 @@ if (sessionStorage.theme === 'dark')
         <Suspense>
           <ErrorBoundary>
             <FontProvider>
-              <ScrollWidthProvider>
-                <IntersectionProvider>
+              <IntersectionProvider>
+                <ScrollWidthProvider>
                   <Routes>
                     <FileRoutes />
                   </Routes>
-                </IntersectionProvider>
-              </ScrollWidthProvider>
+                </ScrollWidthProvider>
+              </IntersectionProvider>
             </FontProvider>
           </ErrorBoundary>
         </Suspense>

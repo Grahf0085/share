@@ -4,7 +4,9 @@ export const ScrollWidthContext = createContext()
 
 export const ScrollWidthProvider = (props) => {
   const [fullTextRef, setFullTextRef] = createSignal()
-  const [scrollWidth, setScrollWidth] = createSignal(0)
+  const [scrollWidth, setScrollWidth] = createSignal(
+    () => fullTextRef().scrollWidth
+  )
   const [drawerOpen, setDrawerOpen] = createSignal(false)
 
   return (

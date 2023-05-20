@@ -17,10 +17,9 @@ import scrollIntoView from 'smooth-scroll-into-view-if-needed'
 
 export default function Fulltext() {
   let intersectionObserver
+  let fullTextResizeObserver
 
-  const [windowWidth, setWindowWidth] = createSignal(window.innerWidth)
   const [clientWidth, setClientWidth] = createSignal()
-  const [scrollLeft, setScrollLeft] = createSignal()
   const [currentPage, setCurrentPage] = createSignal(0)
   const [currentChapter, setCurrentChapter] = createSignal()
   const [allChapters, setAllChapters] = createSignal([])
@@ -36,9 +35,7 @@ export default function Fulltext() {
   const bookRefs = createBookRefs()
   const drawerOpen = createDrawerOpen()
 
-  const maxPage = () => Math.ceil(scrollWidth() / windowWidth() - 1)
-
-  createEffect(() => console.log('max page: ', maxPage()))
+  const maxPage = () => Math.ceil(scrollWidth() / clientWidth() - 1)
 
   const intersectionObserverOptions = {
     root: null, // relative to document viewport
@@ -53,7 +50,7 @@ export default function Fulltext() {
           setCurrentChapter(entry.target.getAttribute('data-chapter'))
           setTextOnScreen(entry.target)
         }
-      }, 100)
+      }, 100) //timeout needed for input into range slider and then changing window size.  not sure why
     })
   }
 
@@ -70,57 +67,58 @@ export default function Fulltext() {
     }
   }
 
-  const handleWindowSize = () => {
-    if (windowWidth() === window.innerWidth) {
-      bookRefs().forEach((reference) =>
-        intersectionObserver.unobserve(reference)
-      )
-    }
-    setWindowWidth(window.innerWidth)
-    /* setScrollWidth(fullTextRef().scrollWidth) */
-    setClientWidth(fullTextRef().clientWidth)
-    scrollIntoView(textOnScreen(), {
-      block: 'center',
-      inline: 'center',
-      behavior: 'smooth',
-    })
-      .then(() => {
-        createEffect(() => {
-          setScrollLeft(fullTextRef().scrollLeft)
-          const percentScrolled = scrollLeft() / (scrollWidth() - clientWidth())
-          const newPage = Math.ceil(percentScrolled * maxPage())
-          setCurrentPage(newPage)
+  const handleScrollTo = () => {
+    if (textOnScreen())
+      scrollIntoView(textOnScreen(), {})
+        .then(() => {
+          createEffect(() => {
+            const percentScrolled =
+              fullTextRef().scrollLeft / (scrollWidth() - clientWidth())
+            const newPage = Math.ceil(percentScrolled * maxPage())
+            setCurrentPage(newPage)
+          })
         })
-      })
-      .finally(() => {
-        bookRefs().forEach((reference) =>
-          intersectionObserver.observe(reference)
-        )
-      })
+        .finally(() => {
+          bookRefs().forEach((reference) =>
+            intersectionObserver.observe(reference)
+          )
+        })
+  }
+
+  const handleTransitionRun = () => {
+    bookRefs().forEach((reference) => intersectionObserver.unobserve(reference))
+  }
+
+  const handleTransitionEnd = () => {
+    setScrollWidth(fullTextRef().scrollWidth)
+    handleScrollTo()
   }
 
   onMount(() => {
     //disable browser search
     window.addEventListener('keydown', (event) => {
-      if (event.keyCode === 114 || (event.ctrlKey && event.keyCode === 70))
+      if (event.key === 'F3' || (event.ctrlKey && event.key === 'f'))
         event.preventDefault()
     })
 
-    const fullTextResizeObserver = new ResizeObserver((entries) => {
+    fullTextResizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        console.log('size changed: ', entry.target)
+        if (clientWidth() === fullTextRef().clientWidth) {
+          bookRefs().forEach((reference) =>
+            intersectionObserver.unobserve(reference)
+          )
+        }
+        setClientWidth(entry.target.clientWidth)
         setScrollWidth(entry.target.scrollWidth)
+        handleScrollTo()
       }
     })
 
-    setScrollWidth(fullTextRef().scrollWidth)
-
     fullTextResizeObserver.observe(fullTextRef())
-
-    window.addEventListener('resize', handleWindowSize)
 
     fullTextRef().addEventListener(
       'wheel',
+      // eslint-disable-next-line solid/reactivity
       throttled(false, 350, (event) => {
         if (event.deltaX > 0)
           setCurrentPage(Math.min(maxPage(), currentPage() + 1))
@@ -131,6 +129,7 @@ export default function Fulltext() {
 
     fullTextRef().addEventListener(
       'keydown',
+      // eslint-disable-next-line solid/reactivity
       throttled(true, 350, (event) => {
         if (event.key === 'ArrowLeft')
           setCurrentPage(Math.max(0, currentPage() - 1))
@@ -138,9 +137,7 @@ export default function Fulltext() {
           setCurrentPage(Math.min(maxPage(), currentPage() + 1))
       })
     )
-  })
 
-  createEffect(() => {
     intersectionObserver = new IntersectionObserver(
       intersectionObserverCallback,
       intersectionObserverOptions
@@ -148,26 +145,26 @@ export default function Fulltext() {
 
     bookRefs().forEach((reference) => intersectionObserver.observe(reference))
 
+    fullTextRef().addEventListener('transitionrun', handleTransitionRun)
+
+    fullTextRef().addEventListener('transitionend', handleTransitionEnd)
     return () => {
-      bookRefs().forEach((reference) =>
-        intersectionObserver.unobserve(reference)
-      )
+      fullTextRef().removeEventListener('transitionend', handleTransitionEnd)
     }
   })
 
   onCleanup(() => {
-    window.removeEventListener('resize', handleWindowSize)
     window.removeEventListener('wheel', throttled)
     fullTextRef().removeEventListener('keydown', throttled)
     intersectionObserver.disconnect()
+    fullTextResizeObserver.disconnect()
   })
 
   createEffect(
     on(
       [font, drawerOpen],
       () => {
-        /* setScrollWidth(fullTextRef().scrollWidth) */
-        handleWindowSize()
+        handleTransitionEnd()
       },
       { defer: true }
     )
@@ -184,9 +181,6 @@ export default function Fulltext() {
               setFullTextRef(el)
               setCurrentPage(0)
               fullTextRef().scrollLeft = 0
-              setScrollWidth(fullTextRef().scrollWidth)
-              setClientWidth(fullTextRef().clientWidth)
-              setScrollLeft(fullTextRef().scrollLeft)
               fullTextRef().focus()
             }
           })
@@ -205,9 +199,6 @@ export default function Fulltext() {
       </div>
       <Slider
         currentPage={currentPage()}
-        scrollWidth={scrollWidth()}
-        clientWidth={clientWidth()}
-        setScrollLeft={setScrollLeft}
         setCurrentPage={setCurrentPage}
         maxPage={maxPage()}
         currentChapter={currentChapter()}

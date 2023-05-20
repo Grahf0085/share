@@ -1,4 +1,4 @@
-/* BUG: flickers when page refreshed on theme other than users preference */
+/* stolen from https://github.com/LenaSchnedlitz/old-homepage/blob/master/src/lib/components/DarkModeToggle.svelte */
 
 import { onMount, createSignal, Show } from 'solid-js'
 import { AiFillBulb, AiOutlineBulb } from 'solid-icons/ai'
@@ -54,7 +54,11 @@ export const Theme = () => {
   }
 
   return (
-    <button type='button' onClick={toggleTheme}>
+    <button
+      type='button'
+      onClick={toggleTheme}
+      class='text-textColor rounded-sm hover:bg-subMenuColor lg:w-full py-4 max-lg:pr-4 flex justify-center items-center'
+    >
       <Show
         when={currentTheme() === THEMES.DARK}
         fallback={<AiFillBulb size={30} />}

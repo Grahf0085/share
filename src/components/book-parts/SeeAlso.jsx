@@ -25,7 +25,7 @@ export const SeeAlso = (props) => {
               chapter: `${seeAlso.chapterNumber}`,
             })
           }}
-          class='bg-subMenuColor rounded-md p-2'
+          class='bg-subMenuColor rounded-sm p-2'
         >
           <cite>{seeAlso.bookTitle}</cite>, Chapter {seeAlso.chapterNumber},
           Paragraph {seeAlso.paragraphNumber}
