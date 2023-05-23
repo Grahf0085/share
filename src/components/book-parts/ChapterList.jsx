@@ -2,7 +2,6 @@ import { getChapterList } from '~/server/database'
 import { createServerData$ } from 'solid-start/server'
 import { useParams } from 'solid-start'
 import { For } from 'solid-js'
-import scrollIntoView from 'smooth-scroll-into-view-if-needed'
 import {
   createSelectedFont,
   createSelectedFontSize,
@@ -28,10 +27,8 @@ export const ChapterList = (props) => {
   )
 
   const handleChapterLink = (chapterNumber) => {
-    scrollIntoView(props.allChapters[chapterNumber], {
-      block: 'nearest',
-      behavior: 'smooth',
-    }).then(() => {
+    props.allChapters[chapterNumber].scrollIntoView({ behavior: 'smooth' })
+    props.fullTextRef.addEventListener('scroll', () => {
       const percentScrolled =
         props.fullTextRef.scrollLeft /
         (props.fullTextRef.scrollWidth - props.fullTextRef.clientWidth)
@@ -41,34 +38,36 @@ export const ChapterList = (props) => {
   }
 
   return (
-    <ul
-      ref={(el) => {
-        setBookRefs((p) => [...p, el])
-      }}
-      style={{
-        'font-size': fontSize(),
-        'line-height': lineHeight(),
-        'font-family': font(),
-      }}
-      class='text-textColor h-full w-full snap-center'
-      data-chapter='Contents'
-      data-book={params.title}
-    >
-      <For
-        each={chapterList()}
-        fallback={<div class='text-textColor'>Loading Chapter List...</div>}
+    <div class='w-full h-full snap-center overflow-y-scroll lg:flex lg:justify-center'>
+      <ul
+        ref={(el) => {
+          setBookRefs((p) => [...p, el])
+        }}
+        style={{
+          'font-size': fontSize(),
+          'line-height': lineHeight(),
+          'font-family': font(),
+        }}
+        class='text-textColor w-fit lg:h-fit h-full flex flex-col'
+        data-chapter='Contents'
+        data-book={params.title}
       >
-        {(chapter) => (
-          <li>
-            <button
-              type='button'
-              onClick={() => handleChapterLink(chapter.chapterNumber)}
-            >
-              {chapter.chapterName}
-            </button>
-          </li>
-        )}
-      </For>
-    </ul>
+        <For
+          each={chapterList()}
+          fallback={<div class='text-textColor'>Loading Chapter List...</div>}
+        >
+          {(chapter) => (
+            <li class='w-full bg-subMenuColor rounded-sm mb-4 p-4 self-center max-lg:text-center'>
+              <button
+                type='button'
+                onClick={() => handleChapterLink(chapter.chapterNumber)}
+              >
+                {chapter.chapterName}
+              </button>
+            </li>
+          )}
+        </For>
+      </ul>
+    </div>
   )
 }

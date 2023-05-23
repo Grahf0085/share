@@ -21,6 +21,7 @@
     "@solidjs/router": "^0.8.2",
     "dotenv": "^16.0.3",
     "pg": "^8.9.0",
+    "scroll-into-view-if-needed": "^3.0.10",
     "smooth-scroll-into-view-if-needed": "^2.0.0",
     "solid-headless": "^0.13.1",
     "solid-icons": "^1.0.4",

@@ -47,7 +47,7 @@ export const BookInfo = () => {
             'line-height': lineHeight(),
             'font-family': font(),
           }}
-          class='text-textColor h-full w-full snap-center flex justify-center md:gap-32 gap-10 items-center flex-col overflow-scroll'
+          class='text-textColor h-full w-full snap-center flex lg:justify-center md:gap-32 gap-10 items-center flex-col overflow-scroll'
           data-chapter='Title'
           data-book={params.title}
         >
@@ -55,7 +55,7 @@ export const BookInfo = () => {
             style={{
               'font-size': titleSize(),
             }}
-            class='font-bold'
+            class='font-bold text-center'
           >
             <cite>
               {info.bookTitle}
@@ -66,7 +66,7 @@ export const BookInfo = () => {
             style={{
               'font-size': otherFontSize(),
             }}
-            class='font-medium'
+            class='font-medium text-center'
           >
             Published: {info.pubDate}
           </li>
@@ -74,7 +74,7 @@ export const BookInfo = () => {
             style={{
               'font-size': otherFontSize(),
             }}
-            class='font-medium'
+            class='font-medium text-center'
           >
             Translated By {info.translatorName}, {info.translatedDate}
           </li>

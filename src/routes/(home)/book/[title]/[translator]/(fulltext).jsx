@@ -13,7 +13,7 @@ import {
   createDrawerOpen,
 } from '~/providers/ScrollWidthProvider'
 import { createBookRefs } from '~/providers/IntersectionProvider'
-import scrollIntoView from 'smooth-scroll-into-view-if-needed'
+/* import scrollIntoView from 'smooth-scroll-into-view-if-needed' */
 
 export default function Fulltext() {
   let intersectionObserver
@@ -68,21 +68,15 @@ export default function Fulltext() {
   }
 
   const handleScrollTo = () => {
-    if (textOnScreen())
-      scrollIntoView(textOnScreen(), {})
-        .then(() => {
-          createEffect(() => {
-            const percentScrolled =
-              fullTextRef().scrollLeft / (scrollWidth() - clientWidth())
-            const newPage = Math.ceil(percentScrolled * maxPage())
-            setCurrentPage(newPage)
-          })
-        })
-        .finally(() => {
-          bookRefs().forEach((reference) =>
-            intersectionObserver.observe(reference)
-          )
-        })
+    if (textOnScreen()) textOnScreen().scrollIntoView()
+    fullTextRef().addEventListener('scroll', () => {
+      const percentScrolled =
+        fullTextRef().scrollLeft /
+        (fullTextRef().scrollWidth - fullTextRef().clientWidth)
+      const newPage = Math.ceil(percentScrolled * maxPage())
+      setCurrentPage(newPage)
+      bookRefs().forEach((reference) => intersectionObserver.observe(reference))
+    })
   }
 
   const handleTransitionRun = () => {

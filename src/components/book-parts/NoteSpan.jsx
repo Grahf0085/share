@@ -5,7 +5,7 @@ export const NoteSpan = (props) => {
   const [showFootnotes, setShowFootnotes] = createSignal(false)
 
   return (
-    <span class='inline-flex'>
+    <span>
       <button
         type='button'
         onClick={() => setShowFootnotes(!showFootnotes())}

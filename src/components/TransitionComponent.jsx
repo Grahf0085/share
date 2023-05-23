@@ -19,7 +19,7 @@ export const TransitionComponent = (props) => {
     >
       <Show when={props.showWhen === true} fallback={props.fallback}>
         <ul
-          class={`max-lg:flex overflow-scroll ${
+          class={`max-lg:flex max-lg:overflow-scroll ${
             props.wFull === true
               ? 'max-lg:bg-subMenuColor w-full max-lg:fixed max-lg:top-36'
               : 'max-lg:transparent w-auto'

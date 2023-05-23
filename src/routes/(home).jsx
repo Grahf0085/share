@@ -9,18 +9,18 @@ export default function App() {
   return (
     <div class='h-screen w-screen flex flex-col bg-backgroundColor'>
       <Header />
-      <div class='flex max-h-[calc(100vh-5rem)] h-full max-lg:flex-col overflow-scroll'>
+      <div class='flex max-h-[calc(100vh-5rem)] h-full max-lg:flex-col overflow-x-scroll overflow-y-hidden'>
         <div
-          class={`duration-500 ${
+          class={`overflow-y-scroll duration-500 ${
             drawerOpen() === true
               ? 'lg:w-[15rem] w-full max-lg:max-h-96 max-lg:h-16'
-              : 'w-0 max-lg:h-0 opacity-0'
+              : 'w-0 max-lg:max-h-0 opacity-0'
           }`}
         >
           <SideMenu />
         </div>
         <div
-          class={`flex flex-col h-full lg:justify-center lg:px-20 px-6 pt-6 pb-2 min-h-0 ${
+          class={`flex flex-col h-full lg:justify-center lg:px-20 px-4 pt-4 pb-2 min-h-0 ${
             drawerOpen() === true ? 'lg:w-[calc(100vw-15rem)]' : 'lg:w-full'
           } duration-500`}
         >

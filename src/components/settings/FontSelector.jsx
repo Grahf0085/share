@@ -40,7 +40,7 @@ export const FontSelector = () => {
             <button
               type='button'
               onClick={() => setSelectedFont(font)}
-              class='w-max h-full text-start py-4 px-4'
+              class='w-max lg:w-full h-full text-start py-4 px-4'
             >
               {font}
             </button>

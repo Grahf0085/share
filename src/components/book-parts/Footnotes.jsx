@@ -40,7 +40,7 @@ export const Footnotes = (props) => {
               'line-height': lineHeight(),
               'font-family': font(),
             }}
-            class='text-textColor bg-subMenuColor rounded-sm px-2'
+            class='text-textColor bg-subMenuColor rounded-sm p-1 inline'
           >
             {footnote + ' '}
           </aside>

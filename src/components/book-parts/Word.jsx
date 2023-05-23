@@ -44,7 +44,7 @@ export const Word = (props) => {
           width: seeAlsoText() ? '66.666667%' : '100%',
           'transition-duration': '500ms',
         }}
-        class='whitespace-pre-wrap py-4 px-14'
+        class='whitespace-pre-wrap py-2 lg:py-4 lg:px-14'
         data-chapter={`Chapter: ${props.chapterNumber}`}
         data-book={props.title}
       >

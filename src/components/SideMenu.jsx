@@ -2,14 +2,14 @@ import { createSignal, Show } from 'solid-js'
 import { useParams } from 'solid-start'
 import { Theme } from './Theme'
 import { FaSolidFont } from 'solid-icons/fa'
-import { FontSelector } from './FontSelector'
 import { AiOutlineLineHeight } from 'solid-icons/ai'
-import { LineHeightSelector } from './LineHeightSelector'
 /* import { IndBookSearch } from './IndBookSearch' */
-import { TextSizeSelector } from './TextSizeSelector'
 import { AiOutlineFontSize } from 'solid-icons/ai'
 import { BiRegularChevronUp, BiRegularChevronDown } from 'solid-icons/bi'
 import { TransitionComponent } from './TransitionComponent'
+import { LineHeightSelector } from './settings/LineHeightSelector'
+import { TextSizeSelector } from './settings/TextSizeSelector'
+import { FontSelector } from './settings/FontSelector'
 
 export const SideMenu = () => {
   const params = useParams()
